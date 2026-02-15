@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-cy0rlmz1y&5-wqm^xqrslu@eh3du0liov!v4+naxf7y(q9_!*t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'jwt_authentication',
+    'rest_framework',
+    "rest_framework_simplejwt.token_blacklist"
 ]
 
 MIDDLEWARE = [
@@ -115,3 +119,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+#  Use the User model inside the jwt_authentication app instead of Django's default User
+AUTH_USER_MODEL = "jwt_authentication.User"
+# Every API request should be authenticated using JWT
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # Uncomment if JWT needed
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
+# Configure how JWT behaves
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    # Django expects Authorization: Bearer <token>
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
